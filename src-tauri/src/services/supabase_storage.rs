@@ -1,78 +1,67 @@
-//! Uploads/downloads snapshots and fetches device records from Supabase
-//! PostgreSQL + Storage. Implemented in Milestones 6-7.
-
 use crate::models::device::Device;
 use crate::models::snapshot::Snapshot;
-use anyhow::Result;
 
+use anyhow::{anyhow, Result};
+use reqwest::Client;
+use std::env;
+use uuid::Uuid;
 
 pub async fn upload_snapshot(
     user_id: &str,
     device_name: &str,
     snapshot: &Snapshot,
 ) -> Result<String> {
+    dotenvy::dotenv().ok();
 
-    println!("=== Snapshot upload started ===");
-    println!("User ID: {}", user_id);
-    println!("Device name: {}", device_name);
+    let supabase_url = env::var("SUPABASE_URL")?;
+    let anon_key = env::var("SUPABASE_ANON_KEY")?;
 
-    println!(
-        "Snapshot data: {:?}",
-        snapshot
+    let client = Client::new();
+
+    let json = serde_json::to_vec(snapshot)?;
+
+    let filename = format!(
+        "{}/{}/{}.json",
+        user_id,
+        device_name,
+        Uuid::new_v4()
     );
 
+    let url = format!(
+        "{}/storage/v1/object/snapshots/{}",
+        supabase_url,
+        filename
+    );
 
-    // TODO Milestone 6:
-    // 1. Convert snapshot into JSON
-    // 2. Upload machine.json to Supabase Storage
-    // 3. Insert metadata into snapshots table
-    // 4. Return generated snapshot ID
+    let response = client
+        .post(url)
+        .header("apikey", &anon_key)
+        .header("Authorization", format!("Bearer {}", anon_key))
+        .header("Content-Type", "application/json")
+        .body(json)
+        .send()
+        .await?;
 
+    if !response.status().is_success() {
+        return Err(anyhow!(
+            "Upload failed: {}",
+            response.text().await?
+        ));
+    }
 
-    println!("=== Snapshot upload completed ===");
+    println!("Snapshot uploaded successfully!");
 
-
-    // Temporary test ID
-    // This confirms that Tauri -> Rust -> service works.
-    Ok("test-upload-id".to_string())
+    Ok(filename)
 }
 
-
 pub async fn fetch_devices(
-    user_id: &str,
+    _user_id: &str,
 ) -> Result<Vec<Device>> {
-
-    println!(
-        "Fetching devices for user: {}",
-        user_id
-    );
-
-
-    // TODO Milestone 7:
-    // SELECT *
-    // FROM devices
-    // WHERE user_id = $1
-
-
     Ok(Vec::new())
 }
 
-
 pub async fn fetch_snapshot(
-    snapshot_id: &str,
+    _snapshot_id: &str,
 ) -> Result<Snapshot> {
-
-    println!(
-        "Fetching snapshot: {}",
-        snapshot_id
-    );
-
-
-    // TODO Milestone 8:
-    // 1. Find snapshot record
-    // 2. Download machine.json from Supabase Storage
-    // 3. Deserialize JSON into Snapshot
-
-
-    anyhow::bail!("fetch_snapshot not implemented yet")
+    anyhow::bail!("Not implemented")
 }
