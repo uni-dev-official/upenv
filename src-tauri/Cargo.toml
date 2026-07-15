@@ -5,6 +5,8 @@ description = "Restorely - Workspace Restoration for Developers"
 authors = ["Restorely"]
 edition = "2021"
 rust-version = "1.77"
+chrono = { version = "0.4", features = ["serde"] }
+
 
 [lib]
 name = "restorely_lib"

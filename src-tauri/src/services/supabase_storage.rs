@@ -4,7 +4,7 @@ use crate::models::snapshot::Snapshot;
 use anyhow::{anyhow, Result};
 use reqwest::Client;
 use std::env;
-use uuid::Uuid;
+use chrono::Utc;
 
 pub async fn upload_snapshot(
     user_id: &str,
@@ -20,11 +20,15 @@ pub async fn upload_snapshot(
 
     let json = serde_json::to_vec(snapshot)?;
 
+    let timestamp = Utc::now()
+        .format("%Y-%m-%d_%H-%M-%S")
+        .to_string();
+
     let filename = format!(
         "{}/{}/{}.json",
         user_id,
         device_name,
-        Uuid::new_v4()
+        timestamp
     );
 
     let url = format!(
