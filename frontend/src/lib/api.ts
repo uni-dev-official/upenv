@@ -29,11 +29,15 @@ export const api = {
     invoke<void>("run_restore", { snapshotId }),
 
   uploadSnapshot: (
-  userId: string,
-  deviceName: string,
-) =>
-  invoke<string>("upload_snapshot", {
-    userId,
-    deviceName,
-  }),
+    userId: string,
+    deviceId: string,
+    deviceName: string,
+    accessToken: string
+  ) =>
+    invoke("upload_snapshot", {
+      userId,
+      deviceId,
+      deviceName,
+      accessToken,
+    }),
 };

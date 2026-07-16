@@ -19,9 +19,14 @@ export function LoginPage() {
     try {
       await login(email, password);
       navigate("/dashboard");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
-    } finally {
+    } catch(err) {
+   console.error("AUTH ERROR:", err);
+   setError(
+     err instanceof Error
+       ? err.message
+       : String(err)
+   );
+} finally {
       setLoading(false);
     }
   }

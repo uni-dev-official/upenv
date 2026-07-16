@@ -53,11 +53,9 @@ pub async fn sign_up(email: &str, password: &str) -> Result<AuthResponse> {
     let user: SupabaseSignupResponse =
         serde_json::from_str(&body)?;
 
-    Ok(AuthResponse {
-        user_id: user.id.unwrap_or_default(),
-        email: user.email.unwrap_or(email.to_string()),
-        access_token: String::new(),
-    })
+    let login = sign_in(email, password).await?;
+
+    Ok(login)
 }
 
 
