@@ -32,7 +32,7 @@ export const api = {
     userId: string,
     deviceId: string,
     deviceName: string,
-    accessToken: string
+    accessToken: string,
   ) =>
     invoke("upload_snapshot", {
       userId,

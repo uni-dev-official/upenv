@@ -5,3 +5,4 @@
 pub mod supabase_auth;
 pub mod supabase_client;
 pub mod supabase_storage;
+pub mod device_service;
