@@ -5,16 +5,6 @@ import { Card } from "../components/Card";
 import { api } from "../lib/api";
 import type { Snapshot } from "../types";
 
-function getDeviceId(): string {
-  let deviceId = localStorage.getItem("device_id");
-
-  if (!deviceId) {
-    deviceId = crypto.randomUUID();
-    localStorage.setItem("device_id", deviceId);
-  }
-
-  return deviceId;
-}
 
 
 export function DashboardPage() {
@@ -75,42 +65,74 @@ export function DashboardPage() {
   }
 
 async function handleUpload() {
-  console.log("UPLOAD BUTTON CLICKED");
-
-  console.log("UPLOAD DATA:", {
-  user,
-  accessToken,
-  snapshot,
-});
+  console.log("========== UPLOAD BUTTON CLICKED ==========");
 
   console.log("AUTH STATE:", {
     user,
     accessToken,
-    snapshot,
+    accessTokenLength: accessToken?.length,
   });
 
-  if (!snapshot || !user || !accessToken?.trim()) {
-    console.log("MISSING DATA");
+  console.log("SNAPSHOT STATE:", {
+    snapshot,
+    snapshotExists: !!snapshot,
+  });
+
+  if (!snapshot) {
+    console.error("❌ Missing snapshot");
     return;
   }
 
-  console.log("Calling uploadSnapshot...");
+  if (!user) {
+    console.error("❌ Missing user");
+    return;
+  }
+
+  if (!accessToken?.trim()) {
+    console.error("❌ Missing access token");
+    return;
+  }
+
+  const deviceId = localStorage.getItem("device_id");
+
+  console.log("DEVICE DATA:", {
+    deviceId,
+    deviceName: snapshot.device_name,
+    hostname: snapshot.hostname,
+    operatingSystem: snapshot.os,
+  });
+
+  if (!deviceId) {
+    console.error("❌ Missing device_id in localStorage");
+    return;
+  }
+
+  console.log("🚀 Calling uploadSnapshot with:");
+
+  console.log({
+    userId: user.id,
+    deviceId,
+    deviceName: snapshot.device_name,
+    accessTokenPreview: accessToken.substring(0, 20) + "...",
+    snapshot,
+  });
 
   try {
-    const deviceId = getDeviceId();
-
     const result = await api.uploadSnapshot(
       user.id,
       deviceId,
       snapshot.device_name,
-      accessToken
+      accessToken,
+      snapshot
     );
 
-    console.log("Upload result:", result);
+    console.log("✅ Upload successful:", result);
 
   } catch (err) {
-    console.error("UPLOAD FAILED:", err);
+    console.error("❌ Upload failed:", err);
   }
+
+  console.log("========== UPLOAD FINISHED ==========");
 }
 
 

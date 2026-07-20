@@ -27,17 +27,18 @@ export const api = {
   // Restore (Milestone 8)
   runRestore: (snapshotId: string) =>
     invoke<void>("run_restore", { snapshotId }),
-
   uploadSnapshot: (
     userId: string,
-    deviceId: string,
     deviceName: string,
+    hostname: string,
+    operatingSystem: string,
     accessToken: string,
   ) =>
     invoke("upload_snapshot", {
       userId,
-      deviceId,
       deviceName,
+      hostname,
+      operatingSystem,
       accessToken,
     }),
 };

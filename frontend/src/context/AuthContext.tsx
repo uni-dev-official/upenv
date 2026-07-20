@@ -38,28 +38,32 @@ export function AuthProvider({
   const [accessToken, setAccessToken] =
     useState<string | null>(null);
 
+async function login(
+  email: string,
+  password: string
+) {
 
-  async function login(
-    email: string,
-    password: string
-  ) {
+  const res = await api.login(
+    email,
+    password
+  );
 
-    const res = await api.login(
-      email,
-      password
-    );
+  console.log("LOGIN RESPONSE:", res);
 
+  setUser({
+    id: res.user_id,
+    email: res.email,
+  });
 
-    setUser({
-      id: res.user_id,
-      email: res.email,
-    });
+  setAccessToken(
+    res.access_token
+  );
 
-
-    setAccessToken(
-      res.access_token
-    );
-  }
+  console.log(
+    "JWT TOKEN:",
+    res.access_token
+  );
+}
 
 
   async function register(

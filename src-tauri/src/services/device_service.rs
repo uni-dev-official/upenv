@@ -2,17 +2,22 @@ use anyhow::{anyhow, Result};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
-
+use chrono::{DateTime, Utc};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Device {
     pub id: String,
-    pub user_id: String,
-    pub device_name: String,
-    pub os: String,
-    pub os_version: String,
-}
 
+    pub user_id: String,
+
+    pub name: String,
+
+    pub hostname: String,
+
+    pub operating_system: String,
+
+    pub created_at: DateTime<Utc>,
+}
 
 pub async fn ensure_device(
     user_id: &str,
