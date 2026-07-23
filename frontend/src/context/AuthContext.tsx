@@ -26,6 +26,21 @@ const AuthContext = createContext<AuthContextValue | undefined>(
   undefined
 );
 
+const fallbackAuthContext: AuthContextValue = {
+  user: null,
+  accessToken: null,
+  isAuthenticated: false,
+  login: async () => {
+    console.error("useAuth called outside AuthProvider");
+  },
+  register: async () => {
+    console.error("useAuth called outside AuthProvider");
+  },
+  logout: async () => {
+    console.error("useAuth called outside AuthProvider");
+  },
+};
+
 
 export function AuthProvider({
   children,
@@ -121,9 +136,8 @@ export function useAuth() {
   const ctx = useContext(AuthContext);
 
   if (!ctx) {
-    throw new Error(
-      "useAuth must be used within AuthProvider"
-    );
+    console.error("useAuth called outside AuthProvider");
+    return fallbackAuthContext;
   }
 
   return ctx;

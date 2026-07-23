@@ -73,10 +73,6 @@ export function DevicesPage() {
                     <strong>Disk:</strong> {d.disk_gb} GB
                   </p>
 
-                  <p>
-                    <strong>Last Backup:</strong>{" "}
-                    {new Date(d.last_backup).toLocaleString()}
-                  </p>
                 </div>
               </div>
 

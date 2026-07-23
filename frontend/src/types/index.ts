@@ -58,9 +58,6 @@ export interface Device {
   cpu: string;
   ram_gb: number;
   disk_gb: number;
-
-  last_backup: string;
-  snapshot_id: string;
 }
 export interface User {
   id: string;

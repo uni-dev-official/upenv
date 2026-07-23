@@ -65,74 +65,26 @@ export function DashboardPage() {
   }
 
 async function handleUpload() {
-  console.log("========== UPLOAD BUTTON CLICKED ==========");
-
-  console.log("AUTH STATE:", {
-    user,
-    accessToken,
-    accessTokenLength: accessToken?.length,
-  });
-
-  console.log("SNAPSHOT STATE:", {
-    snapshot,
-    snapshotExists: !!snapshot,
-  });
-
-  if (!snapshot) {
-    console.error("❌ Missing snapshot");
+  if (!snapshot || !user || !accessToken?.trim()) {
     return;
   }
 
-  if (!user) {
-    console.error("❌ Missing user");
-    return;
-  }
-
-  if (!accessToken?.trim()) {
-    console.error("❌ Missing access token");
-    return;
-  }
-
-  const deviceId = localStorage.getItem("device_id");
-
-  console.log("DEVICE DATA:", {
-    deviceId,
-    deviceName: snapshot.device_name,
-    hostname: snapshot.hostname,
-    operatingSystem: snapshot.os,
-  });
-
-  if (!deviceId) {
-    console.error("❌ Missing device_id in localStorage");
-    return;
-  }
-
-  console.log("🚀 Calling uploadSnapshot with:");
-
-  console.log({
-    userId: user.id,
-    deviceId,
-    deviceName: snapshot.device_name,
-    accessTokenPreview: accessToken.substring(0, 20) + "...",
-    snapshot,
-  });
+  setError(null);
 
   try {
-    const result = await api.uploadSnapshot(
+    await api.uploadSnapshot(
       user.id,
-      deviceId,
       snapshot.device_name,
-      accessToken,
-      snapshot
+      snapshot.hostname,
+      snapshot.os,
+      accessToken
     );
-
-    console.log("✅ Upload successful:", result);
-
   } catch (err) {
-    console.error("❌ Upload failed:", err);
+    console.error("Upload snapshot failed:", err);
+    setError(
+      err instanceof Error ? err.message : String(err)
+    );
   }
-
-  console.log("========== UPLOAD FINISHED ==========");
 }
 
 
@@ -242,7 +194,7 @@ async function handleUpload() {
           </p>
 
           <p className="text-lg font-medium">
-            {snapshot?.applications.length ?? 0}
+            {snapshot?.applications?.length ?? 0}
           </p>
         </Card>
 
@@ -253,7 +205,7 @@ async function handleUpload() {
           </p>
 
           <p className="text-lg font-medium">
-            {snapshot?.vscode_extensions.length ?? 0}
+            {snapshot?.vscode_extensions?.length ?? 0}
           </p>
         </Card>
 
@@ -275,7 +227,7 @@ async function handleUpload() {
 
         <Button
           variant="secondary"
-          disabled={!snapshot }
+          disabled={!snapshot || !user || !accessToken?.trim()}
           onClick={() => void handleUpload()}
         >
           Upload Snapshot

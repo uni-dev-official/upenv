@@ -1,4 +1,3 @@
-use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
 /// A registered device belonging to a user.
@@ -30,10 +29,4 @@ pub struct Device {
 
     /// Disk size (GB).
     pub disk_gb: u32,
-
-    /// Time of the latest successful scan.
-    pub last_backup: DateTime<Utc>,
-
-    /// UUID of the latest uploaded snapshot.
-    pub snapshot_id: String,
 }
