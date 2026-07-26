@@ -68,6 +68,7 @@ export interface AuthResponse {
   user_id: string;
   email: string;
   access_token: string;
+  refresh_token: string;
 }
 
 export interface RestoreProgress {

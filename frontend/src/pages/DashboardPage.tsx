@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
@@ -9,6 +10,7 @@ import type { Snapshot } from "../types";
 
 export function DashboardPage() {
   const { user, accessToken } = useAuth();
+  const navigate = useNavigate();
 
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [lastScan, setLastScan] = useState<string | null>(null);
@@ -236,7 +238,7 @@ async function handleUpload() {
 
         <Button
           variant="secondary"
-          disabled
+          onClick={() => navigate("/devices")}
         >
           Restore Device
         </Button>

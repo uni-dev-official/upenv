@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Card } from "../components/Card";
 import { Button } from "../components/Button";
@@ -6,19 +7,29 @@ import { api } from "../lib/api";
 import type { Device } from "../types";
 
 export function DevicesPage() {
-  const { user } = useAuth();
+  const { user, accessToken } = useAuth();
+  const navigate = useNavigate();
 
   const [devices, setDevices] = useState<Device[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || !accessToken?.trim()) {
+      setLoading(false);
+      return;
+    }
 
     api
-      .listDevices(user.id)
+      .listDevices(user.id, accessToken)
       .then(setDevices)
       .finally(() => setLoading(false));
-  }, [user]);
+  }, [user, accessToken]);
+
+  function handleRestore(deviceId: string) {
+    navigate("/restore", {
+      state: { deviceId },
+    });
+  }
 
   return (
     <div className="max-w-4xl">
@@ -76,7 +87,11 @@ export function DevicesPage() {
                 </div>
               </div>
 
-              <Button variant="secondary">
+              <Button
+                variant="secondary"
+                disabled={!accessToken?.trim()}
+                onClick={() => handleRestore(d.id)}
+              >
                 Restore
               </Button>
             </div>

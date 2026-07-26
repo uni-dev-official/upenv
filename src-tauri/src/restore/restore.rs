@@ -22,11 +22,15 @@ fn emit_progress(app: &AppHandle, step: &str, message: &str, done: bool) {
     );
 }
 
-/// Runs the restore pipeline for a given snapshot ID, step by step:
+/// Runs the restore pipeline for a given device ID, step by step:
 /// Homebrew -> packages -> apps -> Git -> shell -> VS Code -> Node -> Python.
-pub async fn run(app: AppHandle, snapshot_id: &str) -> Result<()> {
+pub async fn run(app: AppHandle, device_id: &str, access_token: &str) -> Result<()> {
     emit_progress(&app, "fetch", "Downloading snapshot...", false);
-    // Milestone 8: fetch snapshot from services::supabase_storage
+    let snapshot = crate::services::supabase_storage::fetch_latest_snapshot_for_device(
+        device_id,
+        access_token,
+    )
+    .await?;
 
     emit_progress(&app, "brew", "Installing Homebrew...", false);
     super::restore_brew::install_homebrew_and_packages().await?;
@@ -35,7 +39,17 @@ pub async fn run(app: AppHandle, snapshot_id: &str) -> Result<()> {
     super::restore_git::restore_git_config().await?;
 
     emit_progress(&app, "apps", "Installing applications...", false);
-    super::restore_apps::install_applications().await?;
+    let apps_summary =
+        super::restore_apps::install_applications(&snapshot.applications).await?;
+    emit_progress(
+        &app,
+        "apps",
+        &format!(
+            "Applications restore complete. Installed: {}. Skipped (already installed): {}.",
+            apps_summary.installed, apps_summary.skipped
+        ),
+        false,
+    );
 
     emit_progress(&app, "vscode", "Installing VS Code and extensions...", false);
     super::restore_vscode::restore_vscode().await?;
@@ -47,6 +61,5 @@ pub async fn run(app: AppHandle, snapshot_id: &str) -> Result<()> {
     super::restore_python::restore_python().await?;
 
     emit_progress(&app, "done", "Finished.", true);
-    let _ = snapshot_id;
     Ok(())
 }

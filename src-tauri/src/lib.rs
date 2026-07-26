@@ -32,6 +32,7 @@ pub fn run() {
             commands::snapshot::scan_snapshot,
             commands::snapshot::upload_snapshot,
             commands::devices::list_devices,
+            commands::restore::run_restore,
 
         ])
         .run(tauri::generate_context!())
