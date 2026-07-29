@@ -1,5 +1,5 @@
-//! Installs applications where possible (via Homebrew casks when available).
-//! Implemented in Milestone 8.
+//! Installs applications where possible via Homebrew casks.
+//! Reports per-application progress to the restore pipeline.
 
 use std::collections::HashSet;
 
@@ -47,7 +47,13 @@ fn app_to_brew_cask(name: &str) -> String {
     slug.trim_matches('-').to_string()
 }
 
-pub async fn install_applications(snapshot_apps: &[String]) -> Result<AppRestoreSummary> {
+pub async fn install_applications<F>(
+    snapshot_apps: &[String],
+    mut progress: F,
+) -> Result<AppRestoreSummary>
+where
+    F: FnMut(usize, usize, &str, &str),
+{
     if snapshot_apps.is_empty() {
         return Ok(AppRestoreSummary::default());
     }
@@ -57,6 +63,7 @@ pub async fn install_applications(snapshot_apps: &[String]) -> Result<AppRestore
     }
 
     let installed_apps = scan_applications().await?;
+
     let installed_set: HashSet<String> = installed_apps
         .iter()
         .map(|name| normalize_app_name(name))
@@ -65,27 +72,90 @@ pub async fn install_applications(snapshot_apps: &[String]) -> Result<AppRestore
     let mut seen = HashSet::new();
     let mut summary = AppRestoreSummary::default();
 
+    let total = snapshot_apps.len();
+    let mut current = 0;
+
     for app_name in snapshot_apps {
         let normalized = normalize_app_name(app_name);
+
         if normalized.is_empty() || !seen.insert(normalized.clone()) {
             continue;
         }
 
+        current += 1;
+
+        // Already installed
         if installed_set.contains(&normalized) {
+            progress(
+                current,
+                total,
+                app_name,
+                "already installed",
+            );
+
             summary.skipped += 1;
             continue;
         }
 
+        // Convert application name to Homebrew cask
         let cask = app_to_brew_cask(app_name);
+
         if cask.is_empty() {
-            anyhow::bail!("Cannot map application `{}` to a brew cask name", app_name);
+            progress(
+                current,
+                total,
+                app_name,
+                "failed",
+            );
+
+            anyhow::bail!(
+                "Cannot map application `{}` to a brew cask name",
+                app_name
+            );
         }
 
-        shell::run("brew", &["install", "--cask", &cask])
-            .await
-            .with_context(|| format!("Failed to install missing app `{}` (cask `{}`)", app_name, cask))?;
+        // Tell frontend installation has started
+        progress(
+            current,
+            total,
+            app_name,
+            "installing",
+        );
 
-        summary.installed += 1;
+        // Install application
+        match shell::run(
+            "brew",
+            &["install", "--cask", &cask],
+        )
+        .await
+        {
+            Ok(_) => {
+                progress(
+                    current,
+                    total,
+                    app_name,
+                    "installed",
+                );
+
+                summary.installed += 1;
+            }
+
+            Err(error) => {
+                progress(
+                    current,
+                    total,
+                    app_name,
+                    "failed",
+                );
+
+                return Err(error).with_context(|| {
+                    format!(
+                        "Failed to install missing app `{}` (cask `{}`)",
+                        app_name, cask
+                    )
+                });
+            }
+        }
     }
 
     Ok(summary)

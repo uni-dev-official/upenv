@@ -3,3 +3,4 @@
 pub mod fs_paths;
 pub mod redact;
 pub mod shell;
+pub mod path;

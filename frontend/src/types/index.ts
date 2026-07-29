@@ -75,4 +75,6 @@ export interface RestoreProgress {
   step: string;
   message: string;
   done: boolean;
+  current?: number;
+  total?: number;
 }
