@@ -33,10 +33,10 @@ pub async fn run(app: AppHandle, device_id: &str, access_token: &str) -> Result<
     .await?;
 
     emit_progress(&app, "brew", "Installing Homebrew...", false);
-    super::restore_brew::install_homebrew_and_packages().await?;
+    super::restore_brew::install_homebrew_and_packages(&snapshot).await?;
 
     emit_progress(&app, "git", "Restoring Git configuration...", false);
-    super::restore_git::restore_git_config().await?;
+    super::restore_git::restore_git_config(&snapshot).await?;
 
     emit_progress(&app, "apps", "Installing applications...", false);
     let apps_summary =
@@ -55,10 +55,10 @@ pub async fn run(app: AppHandle, device_id: &str, access_token: &str) -> Result<
     super::restore_vscode::restore_vscode(&snapshot).await?;
 
     emit_progress(&app, "node", "Restoring Node...", false);
-    super::restore_node::restore_node().await?;
+    super::restore_node::restore_node(&snapshot).await?;
 
     emit_progress(&app, "python", "Restoring Python...", false);
-    super::restore_python::restore_python().await?;
+    super::restore_python::restore_python(&snapshot).await?;
 
     emit_progress(&app, "done", "Finished.", true);
     Ok(())
