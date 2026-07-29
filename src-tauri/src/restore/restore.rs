@@ -52,7 +52,7 @@ pub async fn run(app: AppHandle, device_id: &str, access_token: &str) -> Result<
     );
 
     emit_progress(&app, "vscode", "Installing VS Code and extensions...", false);
-    super::restore_vscode::restore_vscode().await?;
+    super::restore_vscode::restore_vscode(&snapshot).await?;
 
     emit_progress(&app, "node", "Restoring Node...", false);
     super::restore_node::restore_node().await?;
