@@ -36,7 +36,7 @@ export function LoginPage() {
       <Card className="w-full max-w-sm">
         <h1 className="text-xl font-semibold mb-1">Welcome back</h1>
         <p className="text-sm text-[var(--color-text-muted)] mb-6">
-          Log in to Restorely
+          Log in to UpEnv
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">

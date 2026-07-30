@@ -31,7 +31,7 @@ export function RegisterPage() {
       <Card className="w-full max-w-sm">
         <h1 className="text-xl font-semibold mb-1">Create your account</h1>
         <p className="text-sm text-[var(--color-text-muted)] mb-6">
-          Get started with Restorely
+          Get started with UpEnv
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">

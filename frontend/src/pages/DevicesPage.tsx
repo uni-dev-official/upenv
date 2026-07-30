@@ -36,7 +36,7 @@ export function DevicesPage() {
       <h1 className="text-2xl font-semibold mb-1">Devices</h1>
 
       <p className="text-sm text-[var(--color-text-muted)] mb-8">
-        Machines you've backed up with Restorely.
+        Machines you've backed up with UpEnv.
       </p>
 
       {loading && (

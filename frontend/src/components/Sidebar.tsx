@@ -14,7 +14,7 @@ export function Sidebar() {
   return (
     <aside className="w-56 shrink-0 border-r border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col h-full">
       <div className="px-5 py-6">
-        <span className="text-lg font-semibold tracking-tight">Restorely</span>
+        <span className="text-lg font-semibold tracking-tight">UpEnv</span>
       </div>
 
       <nav className="flex-1 px-3 space-y-1">
