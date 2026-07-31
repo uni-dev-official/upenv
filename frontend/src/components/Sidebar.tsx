@@ -47,12 +47,12 @@ export function Sidebar() {
           <img
             src={logo}
             alt="UPENV"
-            className="w-12 h-12 object-contain"
+            className="w-20 h-20 object-contain"
           />
 
           <div>
             <h1 className="text-xl font-bold tracking-tight">
-              UPENV
+              UpEnv
             </h1>
 
             <p className="text-xs text-[var(--color-text-muted)]">
