@@ -1,5 +1,5 @@
 [package]
-name = "restorely"
+name = "UpEnv"
 version = "0.1.0"
 description = "Restorely - Workspace Restoration for Developers"
 authors = ["Restorely"]

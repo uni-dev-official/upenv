@@ -1,6 +1,7 @@
 # Rust / Tauri
 /src-tauri/target
 /src-tauri/gen
+target/
 
 # Frontend
 frontend/node_modules

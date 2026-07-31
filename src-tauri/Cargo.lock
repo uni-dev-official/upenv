@@ -3,6 +3,31 @@
 version = 3
 
 [[package]]
+name = "UpEnv"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "dirs 5.0.1",
+ "dotenvy",
+ "env_logger",
+ "log",
+ "reqwest 0.12.28",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-dialog",
+ "tauri-plugin-fs",
+ "tauri-plugin-shell",
+ "tauri-plugin-store",
+ "thiserror 1.0.69",
+ "tokio",
+ "uuid",
+ "walkdir",
+]
+
+[[package]]
 name = "adler2"
 version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2840,31 +2865,6 @@ dependencies = [
  "wasm-bindgen-futures",
  "wasm-streams",
  "web-sys",
-]
-
-[[package]]
-name = "restorely"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "chrono",
- "dirs 5.0.1",
- "dotenvy",
- "env_logger",
- "log",
- "reqwest 0.12.28",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "tauri-plugin-dialog",
- "tauri-plugin-fs",
- "tauri-plugin-shell",
- "tauri-plugin-store",
- "thiserror 1.0.69",
- "tokio",
- "uuid",
- "walkdir",
 ]
 
 [[package]]

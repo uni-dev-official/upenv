@@ -1,17 +1,26 @@
 @import "tailwindcss";
 
 @theme {
-  /* Restorely dark theme design tokens */
-  --color-bg: #0a0a0c;
-  --color-surface: #131316;
-  --color-surface-hover: #1b1b20;
-  --color-border: #24242b;
-  --color-text: #e8e8ec;
-  --color-text-muted: #8b8b95;
-  --color-accent: #6366f1;
-  --color-accent-hover: #4f46e5;
-  --color-success: #22c55e;
-  --color-danger: #ef4444;
+  /* Backgrounds */
+  --color-bg: #0B1220;
+  --color-surface: #141D2B;
+  --color-surface-hover: #1B2738;
+
+  /* Borders */
+  --color-border: #263244;
+
+  /* Text */
+  --color-text: #F8FAFC;
+  --color-text-muted: #94A3B8;
+
+  /* Brand */
+--color-accent: #3B82F6;
+--color-accent-hover: #2563EB;
+--color-accent-light: #60A5FA;
+
+  /* Status */
+  --color-success: #22C55E;
+  --color-danger: #EF4444;
 }
 
 html,
@@ -21,8 +30,11 @@ body,
 }
 
 body {
-  background-color: var(--color-bg);
-  color: var(--color-text);
+    background:
+        radial-gradient(circle at top, rgba(30,136,255,.08), transparent 35%),
+        #0B1220;
+
+    color: var(--color-text);
   font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -34,4 +46,27 @@ body {
 ::selection {
   background-color: var(--color-accent);
   color: white;
+}
+:root[data-theme="dark"] {
+
+  --color-bg:#0B1220;
+  --color-surface:#141D2B;
+  --color-border:#263244;
+
+  --color-text:#F8FAFC;
+  --color-text-muted:#94A3B8;
+
+  --color-accent:#1E88FF;
+}
+
+:root[data-theme="light"] {
+
+  --color-bg:#F5F7FB;
+  --color-surface:white;
+  --color-border:#E2E8F0;
+
+  --color-text:#111827;
+  --color-text-muted:#64748B;
+
+  --color-accent:#1E88FF;
 }

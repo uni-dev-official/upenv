@@ -5,6 +5,7 @@ import { Button } from "../components/Button";
 import { Card } from "../components/Card";
 import { api } from "../lib/api";
 import type { Snapshot } from "../types";
+import logo from "../logo.png";
 
 
 
@@ -93,15 +94,23 @@ async function handleUpload() {
   return (
     <div className="max-w-5xl">
 
-      <h1 className="text-2xl font-semibold mb-1">
-        Welcome{user ? `, ${user.email}` : ""}
-      </h1>
+      <div className="flex items-center gap-4 mb-8">
+  <img
+    src={logo}
+    alt="UPENV"
+    className="w-20 h-20 object-contain"
+  />
 
+  <div>
+    <h1 className="text-2xl font-semibold">
+      Welcome{user ? `, ${user.email}` : ""}
+    </h1>
 
-      <p className="text-sm text-[var(--color-text-muted)] mb-8">
-        Here's the state of your workspace.
-      </p>
-
+    <p className="text-sm text-[var(--color-text-muted)]">
+      Here's the state of your workspace.
+    </p>
+  </div>
+</div>
 
       {error && (
         <p className="text-sm text-[var(--color-danger)] mb-6">
