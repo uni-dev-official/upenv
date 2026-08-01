@@ -6,6 +6,7 @@ import { Card } from "../components/Card";
 import { api } from "../lib/api";
 import type { Snapshot } from "../types";
 import logo from "../logo.png";
+import cloud from "../assets/backgrounds/cloud.png";
 
 
 
@@ -90,16 +91,86 @@ async function handleUpload() {
   }
 }
 
+return (
+  <div className="relative max-w-5xl">
+
+    {/* Floating Cloud Emojis
+    <div className="fixed inset-0 z-5 pointer-events-none overflow-hidden">
+
+  {Array.from({ length: 12 }).map((_, i) => {
+  const edge = Math.floor(Math.random() * 4);
+
+  let left = 0;
+  let top = 0;
+
+  switch (edge) {
+    // Top
+    case 0:
+      left = Math.random() * 100;
+      top = Math.random() * 15;
+      break;
+
+    // Right
+    case 1:
+      left = 85 + Math.random() * 15;
+      top = Math.random() * 100;
+      break;
+
+    // Bottom
+    case 2:
+      left = Math.random() * 100;
+      top = 85 + Math.random() * 15;
+      break;
+
+    // Left
+    case 3:
+      left = Math.random() * 15;
+      top = Math.random() * 100;
+      break;
+  }
 
   return (
-    <div className="max-w-5xl">
+    <div
+      key={i}
+      className="absolute select-none"
+      style={{
+        left: `${left}%`,
+        top: `${top}%`,
+        fontSize: `${35 + Math.random() * 45}px`,
+        opacity: 0.05 + Math.random() * 0.15,
+        filter: "blur(1px)",
+        transform: `rotate(${Math.random() * 30 - 15}deg)`,
+        animation: `float ${20 + Math.random() * 20}s ease-in-out infinite`,
+        animationDelay: `${Math.random() * 10}s`,
+      }}
+    >
+      ☁️
+    </div>
+  );
+})}
 
+    </div> */}
       <div className="flex items-center gap-4 mb-8">
+<div className="relative">
+
+  <div
+    className="
+      absolute
+      inset-0
+      rounded-full
+      bg-blue-500/20
+      blur-3xl
+      scale-125
+    "
+  />
+
   <img
     src={logo}
     alt="UPENV"
-    className="w-20 h-20 object-contain"
+    className="relative w-45 h-45 object-contain"
   />
+
+</div>
 
   <div>
     <h1 className="text-2xl font-semibold">

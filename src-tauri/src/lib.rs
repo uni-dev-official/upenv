@@ -14,6 +14,7 @@ pub mod restore;
 pub mod scanner;
 pub mod services;
 pub mod utils;
+pub mod config;
 
 /// Builds and runs the Tauri application.
 pub fn run() {

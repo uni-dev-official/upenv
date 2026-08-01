@@ -5,7 +5,12 @@ use anyhow::{anyhow, Result};
 use chrono::Utc;
 use reqwest::Client;
 use serde::Deserialize;
-use std::env;
+
+use crate::config::{
+    SUPABASE_ANON_KEY,
+    SUPABASE_BUCKET,
+    SUPABASE_URL,
+};
 
 #[derive(Debug, Deserialize)]
 struct DeviceRow {
@@ -121,8 +126,8 @@ pub async fn upload_snapshot(
 ) -> Result<String> {
     dotenvy::dotenv().ok();
 
-    let supabase_url = env::var("SUPABASE_URL")?;
-    let anon_key = env::var("SUPABASE_ANON_KEY")?;
+    let supabase_url = SUPABASE_URL;
+    let anon_key = SUPABASE_ANON_KEY;
 
     let client = Client::new();
 
@@ -137,7 +142,7 @@ pub async fn upload_snapshot(
 
     let response = client
         .post(storage_url)
-        .header("apikey", &anon_key)
+        .header("apikey", anon_key)
         .header("Authorization", format!("Bearer {}", access_token))
         .header("Content-Type", "application/json")
         .body(json)
@@ -161,7 +166,7 @@ pub async fn upload_snapshot(
 
     let response = client
         .post(db_url)
-        .header("apikey", &anon_key)
+        .header("apikey", anon_key)
         .header("Authorization", format!("Bearer {}", access_token))
         .header("Content-Type", "application/json")
         .json(&serde_json::json!({
@@ -185,9 +190,8 @@ pub async fn upload_snapshot(
 }
 
 pub async fn fetch_devices(user_id: &str, access_token: &str) -> Result<Vec<Device>> {
-    let supabase_url = std::env::var("SUPABASE_URL")?;
-    let anon_key = std::env::var("SUPABASE_ANON_KEY")?;
-
+    let supabase_url = SUPABASE_URL;
+let anon_key = SUPABASE_ANON_KEY;
     let client = reqwest::Client::new();
 
     let url = format!(
@@ -197,7 +201,7 @@ pub async fn fetch_devices(user_id: &str, access_token: &str) -> Result<Vec<Devi
 
     let response = client
         .get(url)
-        .header("apikey", &anon_key)
+        .header("apikey", anon_key)
         .header("Authorization", format!("Bearer {}", access_token))
         .send()
         .await?;
@@ -251,10 +255,8 @@ pub async fn fetch_snapshot(
     snapshot_id: &str,
     access_token: &str,
 ) -> Result<Snapshot> {
-    let supabase_url = std::env::var("SUPABASE_URL")?;
-    let anon_key = std::env::var("SUPABASE_ANON_KEY")?;
-    let bucket = std::env::var("SUPABASE_SNAPSHOTS_BUCKET")
-        .unwrap_or_else(|_| "snapshots".to_string());
+    let supabase_url = SUPABASE_URL;
+let anon_key = SUPABASE_ANON_KEY;    let bucket = SUPABASE_BUCKET;
 
     let client = reqwest::Client::new();
 
@@ -266,7 +268,7 @@ pub async fn fetch_snapshot(
 
     let response = client
         .get(metadata_url)
-        .header("apikey", &anon_key)
+        .header("apikey", anon_key)
         .header("Authorization", format!("Bearer {}", access_token))
         .send()
         .await?
@@ -297,11 +299,9 @@ pub async fn fetch_latest_snapshot_for_device(
     device_id: &str,
     access_token: &str,
 ) -> Result<Snapshot> {
-    let supabase_url = std::env::var("SUPABASE_URL")?;
-    let anon_key = std::env::var("SUPABASE_ANON_KEY")?;
-
-    let bucket = std::env::var("SUPABASE_SNAPSHOTS_BUCKET")
-        .unwrap_or_else(|_| "snapshots".to_string());
+    let supabase_url = SUPABASE_URL;
+let anon_key = SUPABASE_ANON_KEY;
+    let bucket =SUPABASE_BUCKET;
 
     let client = reqwest::Client::new();
 
@@ -313,7 +313,7 @@ pub async fn fetch_latest_snapshot_for_device(
 
     let response = client
         .get(metadata_url)
-        .header("apikey", &anon_key)
+        .header("apikey", anon_key)
         .header(
             "Authorization",
             format!("Bearer {}", access_token),

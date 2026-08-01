@@ -2,6 +2,12 @@ use crate::commands::auth::AuthResponse;
 use anyhow::{Result, anyhow};
 use serde::Deserialize;
 
+use crate::config::{
+    SUPABASE_ANON_KEY,
+    SUPABASE_BUCKET,
+    SUPABASE_URL,
+};
+
 #[derive(Debug, Deserialize)]
 struct SupabaseSignupResponse {
     id: Option<String>,
@@ -21,19 +27,15 @@ struct SupabaseUser {
 }
 
 pub async fn sign_up(email: &str, password: &str) -> Result<AuthResponse> {
-    let supabase_url =
-        std::env::var("SUPABASE_URL")
-            .map_err(|_| anyhow!("Missing SUPABASE_URL"))?;
+    let supabase_url = SUPABASE_URL;
 
-    let anon_key =
-        std::env::var("SUPABASE_ANON_KEY")
-            .map_err(|_| anyhow!("Missing SUPABASE_ANON_KEY"))?;
+    let anon_key = SUPABASE_ANON_KEY;       
 
     let client = reqwest::Client::new();
 
     let response = client
         .post(format!("{}/auth/v1/signup", supabase_url))
-        .header("apikey", &anon_key)
+        .header("apikey", anon_key)
         .header("Content-Type", "application/json")
         .json(&serde_json::json!({
             "email": email,
@@ -60,11 +62,9 @@ pub async fn sign_up(email: &str, password: &str) -> Result<AuthResponse> {
 
 
 pub async fn sign_in(email: &str, password: &str) -> Result<AuthResponse> {
-    let supabase_url =
-        std::env::var("SUPABASE_URL")?;
+    let supabase_url = SUPABASE_URL;
 
-    let anon_key =
-        std::env::var("SUPABASE_ANON_KEY")?;
+    let anon_key = SUPABASE_ANON_KEY;
 
     let client = reqwest::Client::new();
 
@@ -73,7 +73,7 @@ pub async fn sign_in(email: &str, password: &str) -> Result<AuthResponse> {
             "{}/auth/v1/token?grant_type=password",
             supabase_url
         ))
-        .header("apikey", &anon_key)
+        .header("apikey", anon_key)
         .header("Content-Type", "application/json")
         .json(&serde_json::json!({
             "email": email,
@@ -87,7 +87,7 @@ pub async fn sign_in(email: &str, password: &str) -> Result<AuthResponse> {
     let body = response.text().await?;
 
     if !status.is_success() {
-        return Err(anyhow!("Supabase login failed: {}", body));
+        return Err(anyhow!("Password or email is incorrect"));
     }
 
     let token: SupabaseTokenResponse =

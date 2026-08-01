@@ -2,6 +2,11 @@ use anyhow::{anyhow, Result};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
+use crate::config::{
+    SUPABASE_ANON_KEY,
+    SUPABASE_BUCKET,
+    SUPABASE_URL,
+};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Device {
@@ -24,11 +29,9 @@ pub async fn ensure_device(
 ) -> Result<String> {
     let client = Client::new();
 
-    let supabase_url = std::env::var("SUPABASE_URL")
-        .map_err(|_| anyhow!("Missing SUPABASE_URL"))?;
+    let supabase_url = SUPABASE_URL;
 
-    let anon_key = std::env::var("SUPABASE_ANON_KEY")
-        .map_err(|_| anyhow!("Missing SUPABASE_ANON_KEY"))?;
+    let anon_key = SUPABASE_ANON_KEY;
 
     let lookup_response = client
         .get(format!("{}/rest/v1/devices", supabase_url))
@@ -36,7 +39,7 @@ pub async fn ensure_device(
             ("user_id", format!("eq.{}", user_id)),
             ("name", format!("eq.{}", device_name)),
         ])
-        .header("apikey", &anon_key)
+        .header("apikey", anon_key)
         .header("Authorization", format!("Bearer {}", access_token))
         .send()
         .await?;
@@ -65,7 +68,7 @@ pub async fn ensure_device(
 
     let create_response = client
         .post(format!("{}/rest/v1/devices", supabase_url))
-        .header("apikey", &anon_key)
+        .header("apikey", anon_key)
         .header("Authorization", format!("Bearer {}", access_token))
         .header("Prefer", "return=representation")
         .json(&new_device)
@@ -98,7 +101,7 @@ pub async fn ensure_device(
                     ("user_id", format!("eq.{}", user_id)),
                     ("name", format!("eq.{}", device_name)),
                 ])
-                .header("apikey", &anon_key)
+                .header("apikey", anon_key)
                 .header("Authorization", format!("Bearer {}", access_token))
                 .send()
                 .await?;

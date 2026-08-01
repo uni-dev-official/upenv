@@ -2,6 +2,11 @@
 //! from environment variables set at build/runtime — never hardcoded.
 
 use anyhow::{Context, Result};
+use crate::config::{
+    SUPABASE_ANON_KEY,
+    SUPABASE_BUCKET,
+    SUPABASE_URL,
+};
 
 pub struct SupabaseConfig {
     pub url: String,
@@ -11,8 +16,8 @@ pub struct SupabaseConfig {
 impl SupabaseConfig {
     pub fn from_env() -> Result<Self> {
         Ok(Self {
-            url: std::env::var("SUPABASE_URL").context("SUPABASE_URL not set")?,
-            anon_key: std::env::var("SUPABASE_ANON_KEY").context("SUPABASE_ANON_KEY not set")?,
+            url: SUPABASE_URL.to_string(),
+            anon_key: SUPABASE_ANON_KEY.to_string(),
         })
     }
 }
