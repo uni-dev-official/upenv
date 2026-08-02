@@ -14,23 +14,15 @@ pub struct GitInfo {
 }
 
 pub async fn scan_git() -> Result<GitInfo> {
-    let version = match Command::new("git")
-        .arg("--version")
-        .output()
-    {
+    let version = match Command::new("git").arg("--version").output() {
         Ok(output) if output.status.success() => {
-            Some(
-                String::from_utf8_lossy(&output.stdout)
-                    .trim()
-                    .to_string(),
-            )
+            Some(String::from_utf8_lossy(&output.stdout).trim().to_string())
         }
 
         _ => None,
     };
 
-    let home = std::env::var("HOME")
-        .map_err(|_| anyhow!("HOME environment variable not found"))?;
+    let home = std::env::var("HOME").map_err(|_| anyhow!("HOME environment variable not found"))?;
 
     let gitconfig_path = PathBuf::from(home).join(".gitconfig");
 
@@ -39,9 +31,5 @@ pub async fn scan_git() -> Result<GitInfo> {
         _ => None,
     };
 
-    Ok(GitInfo {
-        version,
-        gitconfig,
-    })
+    Ok(GitInfo { version, gitconfig })
 }
-

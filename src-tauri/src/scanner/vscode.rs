@@ -10,9 +10,7 @@ pub struct VSCodeInfo {
 }
 
 pub async fn scan_vscode() -> Result<VSCodeInfo> {
-    let output = Command::new("code")
-        .args(["--list-extensions"])
-        .output();
+    let output = Command::new("code").args(["--list-extensions"]).output();
 
     match output {
         Ok(output) if output.status.success() => {

@@ -21,8 +21,7 @@ pub async fn restore_git_config(snapshot: &Snapshot) -> Result<()> {
         return Ok(());
     }
 
-    let home = std::env::var("HOME")
-        .map_err(|_| anyhow!("HOME environment variable not found"))?;
+    let home = std::env::var("HOME").map_err(|_| anyhow!("HOME environment variable not found"))?;
 
     let gitconfig_path = PathBuf::from(home).join(".gitconfig");
 

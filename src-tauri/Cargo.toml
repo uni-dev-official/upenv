@@ -5,7 +5,6 @@ description = "Restorely - Workspace Restoration for Developers"
 authors = ["Restorely"]
 edition = "2021"
 rust-version = "1.77"
-chrono = { version = "0.4", features = ["serde"] }
 
 
 [lib]
@@ -22,6 +21,7 @@ tauri-plugin-fs = "2"
 tauri-plugin-dialog = "2"
 tauri-plugin-store = "2"
 uuid = { version = "1", features = ["v4"] }
+
 
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"

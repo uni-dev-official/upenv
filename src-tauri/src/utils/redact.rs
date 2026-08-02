@@ -29,13 +29,8 @@ pub fn is_safe_to_upload(content: &str) -> bool {
 
 /// Filenames that must never have their contents read/uploaded, regardless
 /// of content scanning above (defense in depth).
-pub const FORBIDDEN_FILENAMES: &[&str] = &[
-    "id_rsa",
-    "id_ed25519",
-    "id_ecdsa",
-    ".env",
-    "credentials",
-];
+pub const FORBIDDEN_FILENAMES: &[&str] =
+    &["id_rsa", "id_ed25519", "id_ecdsa", ".env", "credentials"];
 
 pub fn is_forbidden_filename(name: &str) -> bool {
     FORBIDDEN_FILENAMES

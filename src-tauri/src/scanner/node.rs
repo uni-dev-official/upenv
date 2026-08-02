@@ -43,18 +43,10 @@ pub async fn scan_node() -> Result<NodeInfo> {
     let mut global_packages = Vec::new();
 
     if node_version.is_some() && npm_version.is_some() {
-        if let Ok(output) =
-            run_command("npm", &["list", "-g", "--depth=0", "--json"])
-        {
-            if let Ok(json) =
-                serde_json::from_str::<serde_json::Value>(&output)
-            {
-                if let Some(dependencies) =
-                    json["dependencies"].as_object()
-                {
-                    global_packages.extend(
-                        dependencies.keys().cloned()
-                    );
+        if let Ok(output) = run_command("npm", &["list", "-g", "--depth=0", "--json"]) {
+            if let Ok(json) = serde_json::from_str::<serde_json::Value>(&output) {
+                if let Some(dependencies) = json["dependencies"].as_object() {
+                    global_packages.extend(dependencies.keys().cloned());
                 }
             }
         }
@@ -66,4 +58,3 @@ pub async fn scan_node() -> Result<NodeInfo> {
         global_packages,
     })
 }
-

@@ -6,11 +6,7 @@ use chrono::Utc;
 use reqwest::Client;
 use serde::Deserialize;
 
-use crate::config::{
-    SUPABASE_ANON_KEY,
-    SUPABASE_BUCKET,
-    SUPABASE_URL,
-};
+use crate::config::{SUPABASE_ANON_KEY, SUPABASE_BUCKET, SUPABASE_URL};
 
 #[derive(Debug, Deserialize)]
 struct DeviceRow {
@@ -191,7 +187,7 @@ pub async fn upload_snapshot(
 
 pub async fn fetch_devices(user_id: &str, access_token: &str) -> Result<Vec<Device>> {
     let supabase_url = SUPABASE_URL;
-let anon_key = SUPABASE_ANON_KEY;
+    let anon_key = SUPABASE_ANON_KEY;
     let client = reqwest::Client::new();
 
     let url = format!(
@@ -219,7 +215,9 @@ let anon_key = SUPABASE_ANON_KEY;
     let mut devices = Vec::with_capacity(rows.len());
 
     for row in rows {
-        let snapshot = fetch_latest_snapshot_for_device(&row.id, access_token).await.ok();
+        let snapshot = fetch_latest_snapshot_for_device(&row.id, access_token)
+            .await
+            .ok();
 
         if let Some(snapshot) = snapshot {
             devices.push(Device {
@@ -251,19 +249,16 @@ let anon_key = SUPABASE_ANON_KEY;
     Ok(devices)
 }
 
-pub async fn fetch_snapshot(
-    snapshot_id: &str,
-    access_token: &str,
-) -> Result<Snapshot> {
+pub async fn fetch_snapshot(snapshot_id: &str, access_token: &str) -> Result<Snapshot> {
     let supabase_url = SUPABASE_URL;
-let anon_key = SUPABASE_ANON_KEY;    let bucket = SUPABASE_BUCKET;
+    let anon_key = SUPABASE_ANON_KEY;
+    let bucket = SUPABASE_BUCKET;
 
     let client = reqwest::Client::new();
 
     let metadata_url = format!(
         "{}/rest/v1/snapshots?id=eq.{}&select=id,device_id,storage_path,created_at",
-        supabase_url,
-        snapshot_id
+        supabase_url, snapshot_id
     );
 
     let response = client
@@ -283,10 +278,10 @@ let anon_key = SUPABASE_ANON_KEY;    let bucket = SUPABASE_BUCKET;
 
     let bytes = download_snapshot_bytes(
         &client,
-        &supabase_url,
-        &anon_key,
+        supabase_url,
+        anon_key,
         access_token,
-        &bucket,
+        bucket,
         storage_path,
     )
     .await?;
@@ -300,8 +295,8 @@ pub async fn fetch_latest_snapshot_for_device(
     access_token: &str,
 ) -> Result<Snapshot> {
     let supabase_url = SUPABASE_URL;
-let anon_key = SUPABASE_ANON_KEY;
-    let bucket =SUPABASE_BUCKET;
+    let anon_key = SUPABASE_ANON_KEY;
+    let bucket = SUPABASE_BUCKET;
 
     let client = reqwest::Client::new();
 
@@ -314,10 +309,7 @@ let anon_key = SUPABASE_ANON_KEY;
     let response = client
         .get(metadata_url)
         .header("apikey", anon_key)
-        .header(
-            "Authorization",
-            format!("Bearer {}", access_token),
-        )
+        .header("Authorization", format!("Bearer {}", access_token))
         .send()
         .await?;
 
@@ -332,8 +324,7 @@ let anon_key = SUPABASE_ANON_KEY;
         ));
     }
 
-    let rows: Vec<serde_json::Value> =
-        serde_json::from_str(&body)?;
+    let rows: Vec<serde_json::Value> = serde_json::from_str(&body)?;
 
     println!("===== SNAPSHOT ROWS =====");
 
@@ -360,32 +351,24 @@ let anon_key = SUPABASE_ANON_KEY;
 
         match download_snapshot_bytes(
             &client,
-            &supabase_url,
-            &anon_key,
+            supabase_url,
+            anon_key,
             access_token,
-            &bucket,
+            bucket,
             storage_path,
         )
         .await
         {
             Ok(bytes) => {
-                let snapshot: Snapshot =
-                    serde_json::from_slice(&bytes)?;
+                let snapshot: Snapshot = serde_json::from_slice(&bytes)?;
 
-                println!(
-                    "Successfully downloaded snapshot: {}",
-                    storage_path
-                );
+                println!("Successfully downloaded snapshot: {}", storage_path);
 
                 return Ok(snapshot);
             }
 
             Err(err) => {
-                eprintln!(
-                    "Failed to download snapshot {}: {}",
-                    storage_path,
-                    err
-                );
+                eprintln!("Failed to download snapshot {}: {}", storage_path, err);
 
                 last_error = Some(err.to_string());
             }

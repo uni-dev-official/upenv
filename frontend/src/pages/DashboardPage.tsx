@@ -6,7 +6,7 @@ import { Card } from "../components/Card";
 import { api } from "../lib/api";
 import type { Snapshot } from "../types";
 import logo from "../logo.png";
-import cloud from "../assets/backgrounds/cloud.png";
+import { toast } from "sonner";
 
 
 
@@ -73,6 +73,8 @@ async function handleUpload() {
     return;
   }
 
+  const loadingToast = toast.loading("Uploading snapshot...");
+
   setError(null);
 
   try {
@@ -83,14 +85,25 @@ async function handleUpload() {
       snapshot.os,
       accessToken
     );
+
+    toast.dismiss(loadingToast);
+    toast.success("Snapshot uploaded successfully!");
+
   } catch (err) {
     console.error("Upload snapshot failed:", err);
+
+    toast.error(
+      err instanceof Error ? err.message : "Upload failed.",
+      {
+        id: loadingToast,
+      }
+    );
+
     setError(
       err instanceof Error ? err.message : String(err)
     );
   }
 }
-
 return (
   <div className="relative max-w-5xl">
 

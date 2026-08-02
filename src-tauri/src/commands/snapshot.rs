@@ -28,12 +28,12 @@ pub async fn upload_snapshot(
     .map_err(|e| e.to_string())?;
     println!("===== upload_snapshot START =====");
 
-println!("user_id: {}", user_id);
-println!("device_id: {}", device_id);
-println!("device_name: {}", device_name);
-println!("access token length: {}", access_token.len());
+    println!("user_id: {}", user_id);
+    println!("device_id: {}", device_id);
+    println!("device_name: {}", device_name);
+    println!("access token length: {}", access_token.len());
 
-println!("Uploading...");
+    println!("Uploading...");
 
     // Build snapshot
     let snapshot = crate::scanner::snapshot::build_snapshot()

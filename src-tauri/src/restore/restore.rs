@@ -34,30 +34,18 @@ fn emit_progress(
 }
 
 /// Runs the complete Restorely restore pipeline.
-pub async fn run(
-    app: AppHandle,
-    device_id: &str,
-    access_token: &str,
-) -> Result<()> {
+pub async fn run(app: AppHandle, device_id: &str, access_token: &str) -> Result<()> {
     // =========================================================
     // 1. DOWNLOAD SNAPSHOT
     // =========================================================
 
-    emit_progress(
-        &app,
-        "fetch",
-        "Downloading snapshot...",
-        false,
-        None,
-        None,
-    );
+    emit_progress(&app, "fetch", "Downloading snapshot...", false, None, None);
 
-    let snapshot =
-        crate::services::supabase_storage::fetch_latest_snapshot_for_device(
-            device_id,
-            access_token,
-        )
-        .await?;
+    let snapshot = crate::services::supabase_storage::fetch_latest_snapshot_for_device(
+        device_id,
+        access_token,
+    )
+    .await?;
 
     emit_progress(
         &app,
@@ -107,14 +95,7 @@ pub async fn run(
 
     super::restore_git::restore_git_config(&snapshot).await?;
 
-    emit_progress(
-        &app,
-        "git",
-        "Git configuration restored.",
-        true,
-        None,
-        None,
-    );
+    emit_progress(&app, "git", "Git configuration restored.", true, None, None);
 
     // =========================================================
     // 4. APPLICATIONS
@@ -143,51 +124,49 @@ pub async fn run(
 
         let app_handle = app.clone();
 
-        let apps_summary =
-            super::restore_apps::install_applications(
-                &snapshot.applications,
-                move |current, total, app_name, status| {
-                    let message = match status {
-                        "installing" => {
-                            format!("Installing {}...", app_name)
-                        }
+        let apps_summary = super::restore_apps::install_applications(
+            &snapshot.applications,
+            move |current, total, app_name, status| {
+                let message = match status {
+                    "installing" => {
+                        format!("Installing {}...", app_name)
+                    }
 
-                        "installed" => {
-                            format!("✓ {} installed", app_name)
-                        }
+                    "installed" => {
+                        format!("✓ {} installed", app_name)
+                    }
 
-                        "already installed" => {
-                            format!("✓ {} already installed", app_name)
-                        }
+                    "already installed" => {
+                        format!("✓ {} already installed", app_name)
+                    }
 
-                        "failed" => {
-                            format!("✗ {} failed", app_name)
-                        }
+                    "failed" => {
+                        format!("✗ {} failed", app_name)
+                    }
 
-                        _ => {
-                            format!("{} — {}", app_name, status)
-                        }
-                    };
+                    _ => {
+                        format!("{} — {}", app_name, status)
+                    }
+                };
 
-                    emit_progress(
-                        &app_handle,
-                        "apps",
-                        &message,
-                        false,
-                        Some(current),
-                        Some(total),
-                    );
-                },
-            )
-            .await?;
+                emit_progress(
+                    &app_handle,
+                    "apps",
+                    &message,
+                    false,
+                    Some(current),
+                    Some(total),
+                );
+            },
+        )
+        .await?;
 
         emit_progress(
             &app,
             "apps",
             &format!(
                 "Applications complete. Installed: {}. Already installed: {}.",
-                apps_summary.installed,
-                apps_summary.skipped
+                apps_summary.installed, apps_summary.skipped
             ),
             true,
             Some(total_apps),

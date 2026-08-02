@@ -19,65 +19,36 @@ pub async fn collect_system_info() -> Result<SystemInfo> {
     })
 }
 
-
 fn run_command(command: &str, args: &[&str]) -> Result<String> {
-    let output = Command::new(command)
-        .args(args)
-        .output()?;
+    let output = Command::new(command).args(args).output()?;
 
-    Ok(
-        String::from_utf8_lossy(&output.stdout)
-            .trim()
-            .to_string()
-    )
+    Ok(String::from_utf8_lossy(&output.stdout).trim().to_string())
 }
-
 
 fn get_hostname() -> Result<String> {
-    Ok(run_command("hostname", &[])?)
+    run_command("hostname", &[])
 }
-
 
 fn get_device_name() -> Result<String> {
-    Ok(run_command(
-        "scutil",
-        &["--get", "ComputerName"]
-    )?)
+    run_command("scutil", &["--get", "ComputerName"])
 }
-
 
 fn get_os_version() -> Result<String> {
-    Ok(run_command(
-        "sw_vers",
-        &["-productVersion"]
-    )?)
+    run_command("sw_vers", &["-productVersion"])
 }
-
 
 fn get_cpu() -> Result<String> {
-    Ok(run_command(
-        "sysctl",
-        &["-n", "machdep.cpu.brand_string"]
-    )?)
+    run_command("sysctl", &["-n", "machdep.cpu.brand_string"])
 }
 
-
 fn get_ram() -> Result<u32> {
-    let bytes = run_command(
-        "sysctl",
-        &["-n", "hw.memsize"]
-    )?
-    .parse::<u64>()?;
+    let bytes = run_command("sysctl", &["-n", "hw.memsize"])?.parse::<u64>()?;
 
     Ok((bytes / 1024 / 1024 / 1024) as u32)
 }
 
-
 fn get_disk() -> Result<u32> {
-    let output = run_command(
-        "df",
-        &["-k", "/"]
-    )?;
+    let output = run_command("df", &["-k", "/"])?;
 
     let lines: Vec<&str> = output.lines().collect();
 
@@ -85,9 +56,7 @@ fn get_disk() -> Result<u32> {
         return Ok(0);
     }
 
-    let parts: Vec<&str> = lines[1]
-        .split_whitespace()
-        .collect();
+    let parts: Vec<&str> = lines[1].split_whitespace().collect();
 
     if parts.len() < 2 {
         return Ok(0);

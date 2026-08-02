@@ -32,9 +32,7 @@ fn run_command(command: &str, args: &[&str]) -> Result<()> {
     Ok(())
 }
 
-pub async fn install_homebrew_and_packages(
-    snapshot: &Snapshot,
-) -> Result<()> {
+pub async fn install_homebrew_and_packages(snapshot: &Snapshot) -> Result<()> {
     println!("===== HOMEBREW RESTORE =====");
 
     // --------------------------------------------------
@@ -67,9 +65,7 @@ pub async fn install_homebrew_and_packages(
 
     println!("Updating Homebrew...");
 
-    let _ = Command::new("brew")
-        .args(["update"])
-        .status();
+    let _ = Command::new("brew").args(["update"]).status();
 
     // --------------------------------------------------
     // 3. Restore formula packages
@@ -104,10 +100,7 @@ pub async fn install_homebrew_and_packages(
             }
 
             Err(error) => {
-                eprintln!(
-                    "Failed to install Homebrew package {}: {}",
-                    package, error
-                );
+                eprintln!("Failed to install Homebrew package {}: {}", package, error);
             }
         }
     }
@@ -145,10 +138,7 @@ pub async fn install_homebrew_and_packages(
             }
 
             Err(error) => {
-                eprintln!(
-                    "Failed to install cask {}: {}",
-                    cask, error
-                );
+                eprintln!("Failed to install cask {}: {}", cask, error);
             }
         }
     }

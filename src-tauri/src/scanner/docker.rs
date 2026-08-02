@@ -2,10 +2,9 @@
 //! Implemented in Milestone 4.
 
 use anyhow::Result;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
-
-#[derive(Debug, Clone, Serialize, Deserialize, Default )]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct DockerInfo {
     pub docker_version: Option<String>,
     pub compose_version: Option<String>,

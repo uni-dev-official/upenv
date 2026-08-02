@@ -89,10 +89,7 @@ pub async fn restore_node(snapshot: &Snapshot) -> Result<()> {
             }
 
             Err(error) => {
-                eprintln!(
-                    "Failed to install npm package {}: {}",
-                    package, error
-                );
+                eprintln!("Failed to install npm package {}: {}", package, error);
             }
         }
     }
@@ -106,4 +103,3 @@ pub async fn restore_node(snapshot: &Snapshot) -> Result<()> {
 
     Ok(())
 }
-

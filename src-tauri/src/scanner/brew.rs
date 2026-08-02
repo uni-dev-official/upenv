@@ -28,9 +28,7 @@ fn run_command(command: &str, args: &[&str]) -> Result<String> {
 
 pub async fn scan_brew() -> Result<BrewInventory> {
     // Homebrew isn't installed.
-    let brew_check = Command::new("brew")
-        .arg("--version")
-        .output();
+    let brew_check = Command::new("brew").arg("--version").output();
 
     if brew_check.is_err() {
         println!("Homebrew is not installed.");
@@ -54,8 +52,5 @@ pub async fn scan_brew() -> Result<BrewInventory> {
         .map(String::from)
         .collect();
 
-    Ok(BrewInventory {
-        packages,
-        casks,
-    })
+    Ok(BrewInventory { packages, casks })
 }

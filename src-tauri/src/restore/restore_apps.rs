@@ -1,10 +1,7 @@
 //! Installs applications where possible via Homebrew casks.
 //! Reports per-application progress to the restore pipeline.
 
-use std::{
-    collections::HashSet,
-    path::Path,
-};
+use std::{collections::HashSet, path::Path};
 
 use anyhow::{Context, Result};
 
@@ -107,12 +104,7 @@ where
 
         // Already installed
         if installed_set.contains(&normalized) && app_exists(app_name) {
-            progress(
-                current,
-                total,
-                app_name,
-                "already installed",
-            );
+            progress(current, total, app_name, "already installed");
 
             summary.skipped += 1;
             continue;
@@ -122,65 +114,41 @@ where
         let cask = app_to_brew_cask(app_name);
 
         if cask.is_empty() {
-            progress(
-                current,
-                total,
-                app_name,
-                "failed",
-            );
+            progress(current, total, app_name, "failed");
 
-            anyhow::bail!(
-                "Cannot map application `{}` to a brew cask name",
-                app_name
-            );
+            anyhow::bail!("Cannot map application `{}` to a brew cask name", app_name);
         }
 
         // Tell frontend installation has started
-        progress(
-            current,
-            total,
-            app_name,
-            "installing",
-        );
+        progress(current, total, app_name, "installing");
 
         // First install attempt
-        shell::run(
-            "brew",
-            &["install", "--cask", &cask],
-        )
-        .await
-        .with_context(|| {
-            format!(
-                "Failed to install missing app `{}` (cask `{}`)",
-                app_name, cask
-            )
-        })?;
+        shell::run("brew", &["install", "--cask", &cask])
+            .await
+            .with_context(|| {
+                format!(
+                    "Failed to install missing app `{}` (cask `{}`)",
+                    app_name, cask
+                )
+            })?;
 
         // Homebrew sometimes reports success even if the .app
         // has been manually deleted from /Applications.
         // If that happened, force a reinstall.
         if !app_exists(app_name) {
-            shell::run(
-                "brew",
-                &["reinstall", "--cask", &cask],
-            )
-            .await
-            .with_context(|| {
-                format!(
-                    "Failed to reinstall missing app `{}` (cask `{}`)",
-                    app_name, cask
-                )
-            })?;
+            shell::run("brew", &["reinstall", "--cask", &cask])
+                .await
+                .with_context(|| {
+                    format!(
+                        "Failed to reinstall missing app `{}` (cask `{}`)",
+                        app_name, cask
+                    )
+                })?;
         }
 
         // Final verification
         if !app_exists(app_name) {
-            progress(
-                current,
-                total,
-                app_name,
-                "failed",
-            );
+            progress(current, total, app_name, "failed");
 
             anyhow::bail!(
                 "{} was reported installed by Homebrew but {}.app is missing from /Applications",
@@ -189,12 +157,7 @@ where
             );
         }
 
-        progress(
-            current,
-            total,
-            app_name,
-            "installed",
-        );
+        progress(current, total, app_name, "installed");
 
         summary.installed += 1;
     }

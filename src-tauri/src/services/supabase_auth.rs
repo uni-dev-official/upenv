@@ -1,18 +1,11 @@
 use crate::commands::auth::AuthResponse;
-use anyhow::{Result, anyhow};
+use anyhow::{anyhow, Result};
 use serde::Deserialize;
 
-use crate::config::{
-    SUPABASE_ANON_KEY,
-    SUPABASE_BUCKET,
-    SUPABASE_URL,
-};
+use crate::config::{SUPABASE_ANON_KEY, SUPABASE_URL};
 
 #[derive(Debug, Deserialize)]
-struct SupabaseSignupResponse {
-    id: Option<String>,
-    email: Option<String>,
-}
+struct SupabaseSignupResponse {}
 
 #[derive(Debug, Deserialize)]
 struct SupabaseTokenResponse {
@@ -29,7 +22,7 @@ struct SupabaseUser {
 pub async fn sign_up(email: &str, password: &str) -> Result<AuthResponse> {
     let supabase_url = SUPABASE_URL;
 
-    let anon_key = SUPABASE_ANON_KEY;       
+    let anon_key = SUPABASE_ANON_KEY;
 
     let client = reqwest::Client::new();
 
@@ -52,14 +45,12 @@ pub async fn sign_up(email: &str, password: &str) -> Result<AuthResponse> {
         return Err(anyhow!("Supabase signup failed: {}", body));
     }
 
-    let user: SupabaseSignupResponse =
-        serde_json::from_str(&body)?;
+    let _: SupabaseSignupResponse = serde_json::from_str(&body)?;
 
     let login = sign_in(email, password).await?;
 
     Ok(login)
 }
-
 
 pub async fn sign_in(email: &str, password: &str) -> Result<AuthResponse> {
     let supabase_url = SUPABASE_URL;
@@ -90,8 +81,7 @@ pub async fn sign_in(email: &str, password: &str) -> Result<AuthResponse> {
         return Err(anyhow!("Password or email is incorrect"));
     }
 
-    let token: SupabaseTokenResponse =
-        serde_json::from_str(&body)?;
+    let token: SupabaseTokenResponse = serde_json::from_str(&body)?;
 
     Ok(AuthResponse {
         user_id: token.user.id,
@@ -99,7 +89,6 @@ pub async fn sign_in(email: &str, password: &str) -> Result<AuthResponse> {
         access_token: token.access_token,
     })
 }
-
 
 pub async fn sign_out() -> Result<()> {
     Ok(())

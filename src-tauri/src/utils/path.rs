@@ -19,10 +19,7 @@ const MACOS_PATHS: &[&str] = &[
 pub fn initialize_path() {
     let current_path = env::var("PATH").unwrap_or_default();
 
-    let mut paths: Vec<String> = MACOS_PATHS
-        .iter()
-        .map(|path| path.to_string())
-        .collect();
+    let mut paths: Vec<String> = MACOS_PATHS.iter().map(|path| path.to_string()).collect();
 
     for path in env::split_paths(&current_path) {
         let path = path.to_string_lossy().to_string();

@@ -52,10 +52,7 @@ fn try_special_package_restore(package: &str) -> Result<bool> {
 
     match package_name.as_str() {
         "ndiff" => {
-            println!(
-                "Package {} could not be installed through pip.",
-                package
-            );
+            println!("Package {} could not be installed through pip.", package);
 
             if !command_exists("brew") {
                 println!(
@@ -66,17 +63,11 @@ fn try_special_package_restore(package: &str) -> Result<bool> {
                 return Ok(false);
             }
 
-            println!(
-                "Trying to restore {} through Nmap/Homebrew...",
-                package
-            );
+            println!("Trying to restore {} through Nmap/Homebrew...", package);
 
             match run_command("brew", &["install", "nmap"]) {
                 Ok(_) => {
-                    println!(
-                        "Successfully restored {} through Nmap/Homebrew.",
-                        package
-                    );
+                    println!("Successfully restored {} through Nmap/Homebrew.", package);
 
                     Ok(true)
                 }
@@ -123,21 +114,16 @@ pub async fn restore_python(snapshot: &Snapshot) -> Result<()> {
     // 2. Create Restorely's dedicated virtual environment
     // ---------------------------------------------------------
 
-    let home = dirs::home_dir()
-        .ok_or_else(|| anyhow!("Could not determine home directory"))?;
+    let home = dirs::home_dir().ok_or_else(|| anyhow!("Could not determine home directory"))?;
 
     let restorely_dir = home.join(".restorely");
     let venv_path: PathBuf = restorely_dir.join("python-venv");
 
-    let venv_path_string = venv_path
-        .to_string_lossy()
-        .to_string();
+    let venv_path_string = venv_path.to_string_lossy().to_string();
 
     let venv_python = venv_path.join("bin").join("python3");
 
-    let venv_python_string = venv_python
-        .to_string_lossy()
-        .to_string();
+    let venv_python_string = venv_python.to_string_lossy().to_string();
 
     if !venv_python.exists() {
         println!(
@@ -145,36 +131,24 @@ pub async fn restore_python(snapshot: &Snapshot) -> Result<()> {
             venv_path_string
         );
 
-        run_command(
-            "python3",
-            &["-m", "venv", &venv_path_string],
-        )?;
+        run_command("python3", &["-m", "venv", &venv_path_string])?;
     } else {
-        println!(
-            "Restorely Python virtual environment already exists."
-        );
+        println!("Restorely Python virtual environment already exists.");
     }
 
     // ---------------------------------------------------------
     // 3. Upgrade pip inside the virtual environment
     // ---------------------------------------------------------
 
-    println!(
-        "Updating pip inside Restorely virtual environment..."
-    );
+    println!("Updating pip inside Restorely virtual environment...");
 
     if let Err(err) = run_command(
         &venv_python_string,
         &["-m", "pip", "install", "--upgrade", "pip"],
     ) {
-        eprintln!(
-            "Warning: could not upgrade pip: {}",
-            err
-        );
+        eprintln!("Warning: could not upgrade pip: {}", err);
 
-        eprintln!(
-            "Continuing with the existing pip installation..."
-        );
+        eprintln!("Continuing with the existing pip installation...");
     }
 
     // ---------------------------------------------------------
@@ -194,39 +168,22 @@ pub async fn restore_python(snapshot: &Snapshot) -> Result<()> {
         );
 
         for package in &snapshot.python.packages {
-            println!(
-                "--------------------------------------------------"
-            );
+            println!("--------------------------------------------------");
 
-            println!(
-                "Installing Python package: {}",
-                package
-            );
+            println!("Installing Python package: {}", package);
 
             // First try normal pip installation.
-            match run_command(
-                &venv_python_string,
-                &["-m", "pip", "install", package],
-            ) {
+            match run_command(&venv_python_string, &["-m", "pip", "install", package]) {
                 Ok(_) => {
-                    println!(
-                        "Successfully installed: {}",
-                        package
-                    );
+                    println!("Successfully installed: {}", package);
 
                     installed_count += 1;
                 }
 
                 Err(pip_error) => {
-                    eprintln!(
-                        "pip could not install {}.",
-                        package
-                    );
+                    eprintln!("pip could not install {}.", package);
 
-                    eprintln!(
-                        "pip error: {}",
-                        pip_error
-                    );
+                    eprintln!("pip error: {}", pip_error);
 
                     // Try an alternative installation mechanism.
                     match try_special_package_restore(package) {
@@ -238,14 +195,9 @@ pub async fn restore_python(snapshot: &Snapshot) -> Result<()> {
                             skipped_count += 1;
                             failed_packages.push(package.clone());
 
-                            eprintln!(
-                                "WARNING: Could not restore {}.",
-                                package
-                            );
+                            eprintln!("WARNING: Could not restore {}.", package);
 
-                            eprintln!(
-                                "Continuing with the remaining Python packages..."
-                            );
+                            eprintln!("Continuing with the remaining Python packages...");
                         }
 
                         Err(err) => {
@@ -257,9 +209,7 @@ pub async fn restore_python(snapshot: &Snapshot) -> Result<()> {
                                 package, err
                             );
 
-                            eprintln!(
-                                "Continuing with the remaining Python packages..."
-                            );
+                            eprintln!("Continuing with the remaining Python packages...");
                         }
                     }
                 }
@@ -274,17 +224,11 @@ pub async fn restore_python(snapshot: &Snapshot) -> Result<()> {
     println!("--------------------------------------------------");
 
     if let Some(version) = &snapshot.python.python_version {
-        println!(
-            "Snapshot Python version: {}",
-            version
-        );
+        println!("Snapshot Python version: {}", version);
     }
 
     if let Some(version) = &snapshot.python.pip_version {
-        println!(
-            "Snapshot pip version: {}",
-            version
-        );
+        println!("Snapshot pip version: {}", version);
     }
 
     // ---------------------------------------------------------
@@ -293,15 +237,9 @@ pub async fn restore_python(snapshot: &Snapshot) -> Result<()> {
 
     println!("--------------------------------------------------");
 
-    println!(
-        "Python packages successfully restored: {}",
-        installed_count
-    );
+    println!("Python packages successfully restored: {}", installed_count);
 
-    println!(
-        "Python packages skipped: {}",
-        skipped_count
-    );
+    println!("Python packages skipped: {}", skipped_count);
 
     if !failed_packages.is_empty() {
         println!("Packages that could not be restored:");
@@ -311,10 +249,7 @@ pub async fn restore_python(snapshot: &Snapshot) -> Result<()> {
         }
     }
 
-    println!(
-        "Python environment restored to: {}",
-        venv_path_string
-    );
+    println!("Python environment restored to: {}", venv_path_string);
 
     println!("Python restore completed.");
     println!("==========================");

@@ -14,18 +14,13 @@ pub struct PythonInfo {
 
 /// Runs a command and returns stdout if successful.
 fn run_command(command: &str, args: &[&str]) -> Option<String> {
-    let output = Command::new(command)
-        .args(args)
-        .output()
-        .ok()?;
+    let output = Command::new(command).args(args).output().ok()?;
 
     if !output.status.success() {
         return None;
     }
 
-    let output = String::from_utf8_lossy(&output.stdout)
-        .trim()
-        .to_string();
+    let output = String::from_utf8_lossy(&output.stdout).trim().to_string();
 
     if output.is_empty() {
         None
@@ -53,10 +48,7 @@ pub async fn scan_python() -> Result<PythonInfo> {
 
     let mut packages = Vec::new();
 
-    if let Some(output) = run_command(
-        "python3",
-        &["-m", "pip", "list", "--format=freeze"],
-    ) {
+    if let Some(output) = run_command("python3", &["-m", "pip", "list", "--format=freeze"]) {
         for line in output.lines() {
             let package = line.trim();
 

@@ -7,9 +7,7 @@ pub async fn scan_applications() -> Result<Vec<String>> {
 
     let paths = vec![
         PathBuf::from("/Applications"),
-        dirs::home_dir()
-            .unwrap_or_default()
-            .join("Applications"),
+        dirs::home_dir().unwrap_or_default().join("Applications"),
     ];
 
     for path in paths {
@@ -21,10 +19,7 @@ pub async fn scan_applications() -> Result<Vec<String>> {
                     let name = name.to_string_lossy();
 
                     if name.ends_with(".app") {
-                        apps.push(
-                            name.trim_end_matches(".app")
-                                .to_string()
-                        );
+                        apps.push(name.trim_end_matches(".app").to_string());
                     }
                 }
             }

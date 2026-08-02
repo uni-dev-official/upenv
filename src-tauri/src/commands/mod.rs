@@ -6,5 +6,5 @@ pub mod auth;
 pub mod devices;
 pub mod restore;
 pub mod scan;
-pub mod system;
 pub mod snapshot;
+pub mod system;

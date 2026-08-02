@@ -1,12 +1,8 @@
+use crate::config::{SUPABASE_ANON_KEY, SUPABASE_URL};
 use anyhow::{anyhow, Result};
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
-use crate::config::{
-    SUPABASE_ANON_KEY,
-    SUPABASE_BUCKET,
-    SUPABASE_URL,
-};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Device {

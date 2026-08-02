@@ -1,20 +1,17 @@
-//! Restorely core library.
+//! UpEnv
 //!
-//! - `commands`  : Tauri command handlers exposed to the frontend (thin glue layer)
-//! - `scanner`   : Read-only collectors that inspect the local machine
-//! - `restore`   : Installers/appliers that reconstruct a machine from a snapshot
 //! Modular layout:
-//! - `models`    : Shared serde data structures (Snapshot, Device, etc.)
-//! - `services`  : Cross-cutting services (Supabase client, auth, storage)
-//! - `utils`     : Small stateless helpers (fs paths, shell exec, logging)
-
+//! - scanner
+//! - restore
+//! - services
+//! - commands
 pub mod commands;
+pub mod config;
 pub mod models;
 pub mod restore;
 pub mod scanner;
 pub mod services;
 pub mod utils;
-pub mod config;
 
 /// Builds and runs the Tauri application.
 pub fn run() {

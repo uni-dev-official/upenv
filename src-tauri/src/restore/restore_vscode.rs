@@ -15,9 +15,7 @@ pub async fn restore_vscode(snapshot: &Snapshot) -> Result<()> {
 
     println!("Checking for VS Code...");
 
-    let vscode_check = Command::new("code")
-        .arg("--version")
-        .output();
+    let vscode_check = Command::new("code").arg("--version").output();
 
     if vscode_check.is_err() {
         println!("VS Code CLI not found. Installing VS Code with Homebrew...");
@@ -28,9 +26,7 @@ pub async fn restore_vscode(snapshot: &Snapshot) -> Result<()> {
             .map_err(|e| anyhow!("Failed to run Homebrew: {}", e))?;
 
         if !brew_install.success() {
-            return Err(anyhow!(
-                "Homebrew failed to install Visual Studio Code"
-            ));
+            return Err(anyhow!("Homebrew failed to install Visual Studio Code"));
         }
     } else {
         println!("VS Code is already installed.");
@@ -73,17 +69,11 @@ pub async fn restore_vscode(snapshot: &Snapshot) -> Result<()> {
             }
 
             Ok(status) => {
-                eprintln!(
-                    "Failed to install {}. Exit status: {}",
-                    extension, status
-                );
+                eprintln!("Failed to install {}. Exit status: {}", extension, status);
             }
 
             Err(error) => {
-                eprintln!(
-                    "Could not run VS Code CLI for {}: {}",
-                    extension, error
-                );
+                eprintln!("Could not run VS Code CLI for {}: {}", extension, error);
             }
         }
     }

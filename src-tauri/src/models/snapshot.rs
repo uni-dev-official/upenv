@@ -1,12 +1,11 @@
+use crate::models::system_info::SystemInfo;
 use crate::scanner::docker::DockerInfo;
 use crate::scanner::git::GitInfo;
 use crate::scanner::node::NodeInfo;
 use crate::scanner::python::PythonInfo;
-use crate::models::system_info::SystemInfo;
 
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Snapshot {

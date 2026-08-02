@@ -1,5 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { Toaster } from "sonner";
+
 import "./index.css";
 import App from "./App";
 import { ThemeProvider } from "./context/ThemeContext";
@@ -7,6 +9,12 @@ import { ThemeProvider } from "./context/ThemeContext";
 createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
     <ThemeProvider>
+      <Toaster
+        position="bottom-right"
+        richColors
+        closeButton
+      />
+
       <App />
     </ThemeProvider>
   </StrictMode>,
